@@ -6,6 +6,39 @@ model <- lm(a ~ morceaux_fraises + colorant, data = data)
 install.packages("car")
 library(car)
 
+# Charger le fichier Excel
+data <- read_excel("Tableau colorant pour R.xlsx", sheet = "Feuil1")
+
+# Renommer les colonnes pour faciliter leur utilisation
+colnames(data) <- c("Unnamed1", "Unnamed2", "fraises", "colorant", "a")
+
+# Convertir les colonnes catégoriques en facteurs
+data$fraises <- as.factor(data$fraises)
+data$colorant <- as.factor(data$colorant)
+
+# ANOVA
+anova_model <- aov(a ~ fraises + colorant, data = data)
+summary(anova_model)
+
+# Résidus
+residuals <- residuals(anova_model)
+
+# Histogramme des résidus
+hist(residuals, main = "Histogramme des résidus", xlab = "Résidus", col = "lightblue")
+
+# QQ Plot
+qqnorm(residuals)
+qqline(residuals, col = "red")
+
+# Test de normalité Shapiro-Wilk
+shapiro_test <- shapiro.test(residuals)
+print(shapiro_test)
+
+# Test de Kolmogorov-Smirnov
+ks_test <- ks.test(residuals, "pnorm", mean = mean(residuals), sd = sd(residuals))
+print(ks_test)
+
+
 #Test de Levene
 leveneTest(a ~ morceaux_fraises * colorant, data = data)
 
