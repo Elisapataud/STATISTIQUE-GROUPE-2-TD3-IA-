@@ -1,4 +1,4 @@
-## QUESTION 3-1 NORMALITE DES VALEURS
+### QUESTION 3-1 NORMALITE DES VALEURS
 
 setwd("C:\Users\Camille\Documents\SAIA\Cours 2A\Stats")
 library(readxl)
@@ -28,4 +28,14 @@ for (var in variables) {
          col = "red")
 }
 
-## QUESTION 3-2 NORMALITE DES VALEURS
+### QUESTION 3-2 NORMALITE DES RESIDUS
+
+residus <- c(-9.0629, -1.3481, 0.1464, 1.2844, 10.3271)
+hist(residus, breaks = 20, col = "skyblue", main = "Histogramme des Résidus", xlab = "Résidus", probability = TRUE)
+
+#ON MET LA COURBE DE DENSITE
+curve(dnorm(x, mean = mean(residus), sd = sd(residus)), col = "red", lwd = 2, add = TRUE)
+
+#ON MET UNE LIGNE A LA MOYENNE DES RESIDUS
+abline(v = mean(residus), col = "blue", lwd = 2, lty = 2)
+
