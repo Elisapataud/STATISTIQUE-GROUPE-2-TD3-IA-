@@ -57,5 +57,5 @@ ggplot(means, aes(x = colorant, y = a, color = morceaux_fraises, group = morceau
      theme(text = element_text(size = 14))  # Taille des textes
 
 #Anova à 2 facteurs
-anova_model <- aov(a ~ `morceaux fraises` * colorant, data = data)
+anova_model <- aov(a ~ morceaux_fraises * colorant, data = data)
 summary(anova_model)
