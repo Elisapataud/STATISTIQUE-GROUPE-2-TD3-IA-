@@ -1,1 +1,72 @@
+### Test du KHI-2
 
+
+# Fréquences observées
+observed <- c(49, 61, 103, 87)
+
+# Fréquences attendues
+expected <- rep(sum(observed) / length(observed), length(observed))
+
+# Test du chi-2
+chisq.test(observed, p = rep(1/length(observed), length(observed)))
+
+
+### DISTRIBUTION DES DONNEES
+
+
+data <- c(40.96, 40.80, 38.44, 44.47, 40.39, 41.41, 42.60, 42.16, 39.05, 42.55,
+          40.14, 41.90, 41.43, 40.06, 40.56, 39.74, 38.73, 40.23, 40.81, 41.51,
+          39.26, 42.89, 42.15, 37.89, 39.44, 42.59, 45.52, 40.45, 35.89, 42.74)
+
+# Calcul de la moyenne et l'écart-type
+mean_data <- mean(data)
+sd_data <- sd(data)
+
+# Créer l'histogramme
+hist(data, 
+     breaks = 10,  # Nombre de barres
+     prob = TRUE,  # Échelle en densité
+     main = "Histogramme des données avec courbe normale",
+     xlab = "Valeurs des données",
+     ylab = "Densité",
+     col = "lightblue",  # Couleur des barres
+     border = "black")   # Bordure des barres
+
+# On crée la courbe de densité normale
+curve(dnorm(x, mean = mean_data, sd = sd_data), 
+      col = "red", 
+      lwd = 2,  # Épaisseur de la ligne
+      add = TRUE)
+
+
+### TEST DE SHAPIRO
+
+
+# On entre les données
+data <- c(40.96, 40.80, 38.44, 44.47, 40.39, 41.41, 42.60, 42.16, 39.05, 42.55,
+          40.14, 41.90, 41.43, 40.06, 40.56, 39.74, 38.73, 40.23, 40.81, 41.51,
+          39.26, 42.89, 42.15, 37.89, 39.44, 42.59, 45.52, 40.45, 35.89, 42.74)
+
+# Test de Shapiro-Wilk
+shapiro_result <- shapiro.test(data)
+
+# Affichage des résultats
+print(shapiro_result)
+
+
+### TEST DE STUDENT
+
+
+# Données
+data <- c(40.96, 40.80, 38.44, 44.47, 40.39, 41.41, 42.60, 42.16, 39.05, 42.55,
+          40.14, 41.90, 41.43, 40.06, 40.56, 39.74, 38.73, 40.23, 40.81, 41.51,
+          39.26, 42.89, 42.15, 37.89, 39.44, 42.59, 45.52, 40.45, 35.89, 42.74)
+
+# Référence nationale
+mu_0 <- 39
+
+# Test t unilatéral
+t_test <- t.test(data, mu = mu_0, alternative = "greater")
+
+# Affichage des résultats
+print(t_test)
