@@ -1,4 +1,3 @@
-
 #Préparation avant de faire les tests
 file_path<-"C:/Users/elise/Desktop/q6 test.ods"
 data <- read_ods(file_path, sheet = 1)
@@ -6,10 +5,10 @@ model <- lm(a ~ morceaux_fraises + colorant, data = data)
 install.packages("car")
 library(car)
 
-# Charger le fichier Excel
+# Charger le fichier Excel tableau adapté à R 
 data <- read_excel("Tableau colorant pour R.xlsx", sheet = "Feuil1")
 
-# Renommer les colonnes pour faciliter leur utilisation
+# Nommer nos colonnes 
 colnames(data) <- c("Unnamed1", "Unnamed2", "fraises", "colorant", "a")
 
 # Convertir les colonnes catégoriques en facteurs
@@ -19,8 +18,6 @@ data$colorant <- as.factor(data$colorant)
 # ANOVA
 anova_model <- aov(a ~ fraises + colorant, data = data)
 summary(anova_model)
-
-# Résidus
 residuals <- residuals(anova_model)
 
 # Histogramme des résidus
@@ -37,7 +34,6 @@ print(shapiro_test)
 # Test de Kolmogorov-Smirnov
 ks_test <- ks.test(residuals, "pnorm", mean = mean(residuals), sd = sd(residuals))
 print(ks_test)
-
 
 #Test de Levene
 leveneTest(a ~ morceaux_fraises * colorant, data = data)
