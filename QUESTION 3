@@ -1,1 +1,31 @@
+## QUESTION 3-1 NORMALITE DES VALEURS
 
+setwd("C:\Users\Camille\Documents\SAIA\Cours 2A\Stats")
+library(readxl)
+library(ggplot2)
+
+file_path <- "Projet yaourts TD3-GR2 (1).xlsx"
+data <- read_excel("C:\Users\Camille\Documents\SAIA\Cours 2A\Stats\Projet yaourts TD3-GR2(1).xlsx", sheet = "Question 3")
+
+# Liste des variables à analyser
+variables <- c("Taille du broyat de fraise (mm)", 
+               "Colorant rouge (%)", 
+               "a", 
+               "Temps d'agitation (s)")
+# Parcourir chaque variable pour créer les graphiques
+for (var in variables) {
+  # HISTOGRAMMES
+  hist(data[[var]], 
+       main = paste("Histogramme de", var), 
+       xlab = var, 
+       col = "lightblue", 
+       border = "white")
+  
+  # QQPLOT
+  qqnorm(data[[var]], 
+         main = paste("QQ-plot de", var))
+  qqline(data[[var]], 
+         col = "red")
+}
+
+## QUESTION 3-2 NORMALITE DES VALEURS
