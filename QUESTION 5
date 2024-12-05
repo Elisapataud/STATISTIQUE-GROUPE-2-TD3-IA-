@@ -1,1 +1,29 @@
+#QUESTION 5a
+#Préparation avant tests
+file_path<-"C:/Users/elise/Desktop/summary test.ods"
+data <- read_ods(file_path, sheet = 1)
 
+#Summary
+summary(data)
+
+#Boxplot
+boxplot(data$Temoin, data$Colore,
+        names = c("Produit témoin", "Produit coloré"),
+        col = c("lightgreen", "purple"),
+        main = "Boxplot des notes attribuées par les experts",
+        ylab = "Valeurs")
+
+#QQ plot
+qqnorm(data$Temoin, main = "qqPlot - Temoin")
+qqline(data$Temoin, col = "lightgreen", lwd = 2)
+qqnorm(data$Colore, main = "qqPlot - Colore")
+qqline(data$Colore, col = "purple", lwd = 2)
+
+#Test de Shapiro
+shapiro.test(data$Temoin)
+shapiro.test(data$Colore)
+
+#Test de Student
+t.test(data$Colore, data$Temoin, paired = TRUE, alternative = "two.sided")
+
+#QUESTION 5b
