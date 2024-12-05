@@ -28,6 +28,17 @@ for (var in variables) {
          col = "red")
 }
 
+###QUESTION 3-1 TEST KS
+
+library(readxl)
+data <- read_excel("C:/Users/Camille/Documents/SAIA/Cours 2A/Stats/Projet yaourts TD3-GR2(1).xlsx", sheet = "Question 3 ")
+
+modele <- lm(Luminance ~ Taille_broyat + Colorant_rouge + Temps_agitation, data = data)
+residus <- resid(modele)
+ks_test <- ks.test(residus, "pnorm", mean = mean(residus), sd = sd(residus))
+
+print(ks_test)
+
 ### QUESTION 3-2 NORMALITE DES RESIDUS
 
 residus <- c(-9.0629, -1.3481, 0.1464, 1.2844, 10.3271)
@@ -38,4 +49,5 @@ curve(dnorm(x, mean = mean(residus), sd = sd(residus)), col = "red", lwd = 2, ad
 
 #ON MET UNE LIGNE A LA MOYENNE DES RESIDUS
 abline(v = mean(residus), col = "blue", lwd = 2, lty = 2)
+
 
