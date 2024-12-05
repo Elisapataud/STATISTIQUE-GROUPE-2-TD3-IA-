@@ -1,1 +1,98 @@
+###### Vérification de l'interaction entre Cuve et Ligne attention à prendre le bon document 
+
+library(ggplot2) 
+library(readxl)  
+library(ggplot2) 
+library(dplyr)   
+library(car)     
+
+# 2. Chargement des données
+données <- read_excel("Desktop/Yaourts_OK.xlsx")
+
+# 3. Vérification des données
+print(head(données))  # Affiche un aperçu des données
+
+# 4. Création du graphique d'interaction
+interaction.plot(
+  données$Cuve, # Axe X : les différentes cuves
+  données$Ligne, # Facteur : les lignes
+  données$Valeur, # Variable dépendante
+  col = c("red", "blue"), # Couleurs des lignes
+  lty = 1, # Type de ligne
+  legend = TRUE, # Ajouter une légende
+  xlab = "Cuve", # Nom de l'axe X
+  ylab = "Valeur (Paramètre de couleur)", # Nom de l'axe Y
+  main = "Graphique d'interaction : Cuve x Ligne")
+
+
+###### Question Noramlité des résidus QQplot 
+# Conversion des colonnes Cuve et Ligne en facteurs
+données$Cuve <- as.factor(données$Cuve)
+données$Ligne <- as.factor(données$Ligne)
+
+# Ajustement du modèle ANOVA complet avec interaction
+modèle <- aov(Valeur ~ Cuve * Ligne, data = données)
+
+#Extraction des résidus
+residus <- residuals(modèle)
+
+#Q-Q plot pour les résidus globaux
+par(mfrow = c(1, 2))  # Organise la fenêtre graphique pour afficher plusieurs plots
+qqnorm(residus, main = "Q-Q plot des résidus")
+qqline(residus, col = "red")  # Ajout de la ligne de référence
+
+# Analyse des résidus globaux : histogramme
+par(mfrow = c(1, 1))  # Réinitialise la disposition graphique
+hist(residus, breaks = 10, col = "gray", main = "Histogramme des résidus", xlab = "Résidus")
+
+# Créer le modèle ANOVA
+modele <- aov(Valeur ~ Cuve * Ligne, data = données)
+
+# Extraire les résidus
+residus <- residuals(modele)
+
+######### Test de Shapiro-Wilk pour la normalité des résidus
+shapiro_result <- shapiro.test(residus)
+print("Résultats du test de Shapiro-Wilk pour les résidus :")
+print(shapiro_result)
+
+########## Test de Kolmogorov-Smirnov pour la normalité des résidus
+ks_result <- ks.test(residus, "pnorm", mean = mean(residus), sd = sd(residus))
+print("Résultats du test de Kolmogorov-Smirnov (KS) pour les résidus :")
+print(ks_result)
+
+##### test de Bartlett
+bartlett_test <- bartlett.test(Valeur~ interaction(Cuve, Ligne), data = données)
+print(bartlett_test)
+
+############## Réalisation de l'ANOVA à deux facteurs
+modele_anova <- aov(Valeur ~ Cuve * Ligne, data = données)
+
+#Affichage des résultats de l'ANOVA
+summary(modele_anova)
+
+#### Dispersion des valeurs sur fichier yaourt ok 
+données$GroupeJour <- ifelse(données$Jour %in% c("Lundi", "Mercredi"), "Lundi_Mercredi", "Vendredi")
+# Test de Bartlett pour les groupes de jours
+bartlett_jour_res <- bartlett.test(Valeur ~ GroupeJour, data = données)
+print("Résultats du test de Bartlett (Jours) :")
+print(bartlett_jour_res)
+
+####### Charger les bibliothèques nécessaires changement de fichier (Classeur3= premiere feuille de notre doc)
+library(readxl)
+library(dplyr)
+library(tidyr)
+
+# Charger les données
+données <- read_excel("Desktop/Classeur3.xlsx")
+
+# Restructurer les données pour passer de large à long format
+données_long <- données %>%
+  pivot_longer(cols = starts_with("C"), names_to = "Mesure", values_to = "Valeur")
+
+# Effectuer le test de Bartlett pour l'homogénéité des variances par jour
+bartlett_result <- bartlett.test(Valeur ~ Jour, data = données_long)
+
+# Afficher le résultat
+print(bartlett_result)
 
