@@ -27,3 +27,22 @@ shapiro.test(data$Colore)
 t.test(data$Colore, data$Temoin, paired = TRUE, alternative = "two.sided")
 
 #QUESTION 5b
+
+# Création du tableau de contingence
+# Les valeurs sont organisées comme suit :
+# - Première ligne : Satisfait pour les deux (Produit témoin et Produit coloré) et Non satisfait pour le produit coloré
+# - Deuxième ligne : Non satisfait pour le témoin mais satisfait pour le coloré, et Non satisfait pour les deux
+tableau_contingence <- matrix(c(9, 2, 11, 7), nrow = 2, byrow = TRUE,
+                              dimnames = list("Produit témoin" = c("Satisfait", "Non satisfait"),
+                                              "Produit coloré" = c("Satisfait", "Non satisfait")))
+
+# Afficher le tableau de contingence
+print("Tableau de contingence :")
+print(tableau_contingence)
+
+# Effectuer le test de McNemar
+test_mcnemar <- mcnemar.test(tableau_contingence)
+
+# Afficher les résultats
+print("Résultat du test de McNemar :")
+print(test_mcnemar)
