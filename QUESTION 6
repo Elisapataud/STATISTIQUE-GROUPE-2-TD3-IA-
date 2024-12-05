@@ -19,13 +19,13 @@ cat("Autocorrélation des résidus : ", round(autocorrelation, 3), "\n")
 
 #Graphique d'interaction
 ggplot(means, aes(x = colorant, y = a, color = morceaux_fraises, group = morceaux_fraises)) +
-+     geom_line(size = 1) +  # Lignes des interactions
-+     geom_point(size = 3) +  # Points pour les moyennes
-+     labs(x = "Pourcentage de colorant", 
-+          y = "Moyenne", 
-+          color = "Pourcentage de morceaux de fraises") +
-+     theme_minimal() +  # Style minimal pour le graphique
-+     theme(text = element_text(size = 14))  # Taille des textes
+     geom_line(size = 1) +  # Lignes des interactions
+     geom_point(size = 3) +  # Points pour les moyennes
+     labs(x = "Pourcentage de colorant", 
+          y = "Moyenne", 
+          color = "Pourcentage de morceaux de fraises") +
+     theme_minimal() +  # Style minimal pour le graphique
+     theme(text = element_text(size = 14))  # Taille des textes
 
 #Anova à 2 facteurs
 anova_model <- aov(a ~ `morceaux fraises` * colorant, data = data)
