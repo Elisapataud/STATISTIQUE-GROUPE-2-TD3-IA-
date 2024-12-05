@@ -59,3 +59,115 @@ ggplot(means, aes(x = colorant, y = a, color = morceaux_fraises, group = morceau
 #Anova à 2 facteurs
 anova_model <- aov(a ~ morceaux_fraises * colorant, data = data)
 summary(anova_model)
+
+######### TUKEY
+# Charger les bibliothèques nécessaires
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(RColorBrewer)  # Pour les palettes de couleurs attrayantes
+library(ggsignif)      # Pour ajouter des annotations significatives
+library(multcompView)  # Pour générer des lettres significatives
+
+# Importer les données
+data <- read_excel("Desktop/Tableau colorant pour R.xlsx")
+
+# Renommer les colonnes utiles
+colnames(data) <- c("fraises", "colorant", "luminance")
+
+# Convertir en facteurs si nécessaire
+data$colorant <- as.factor(data$colorant)
+data$fraises <- as.factor(data$fraises)
+
+# Construire et analyser le modèle ANOVA pour l'effet du colorant
+anova_model <- aov(luminance ~ colorant, data = data)
+summary(anova_model)
+
+# Effectuer le test de Tukey pour l'effet du colorant
+tukey_result_colorant <- TukeyHSD(anova_model, "colorant")
+tukey_colorant_df <- as.data.frame(tukey_result_colorant$colorant)
+tukey_colorant_df$Comparison <- rownames(tukey_colorant_df)
+
+# Afficher les résultats du test de Tukey pour l'effet du colorant
+print("Table des résultats de Tukey pour l'effet du colorant :")
+print(tukey_colorant_df)
+
+# Obtenir les lettres significatives pour les barres
+letters_colorant <- multcompLetters(tukey_result_colorant$colorant[, "p adj"])
+
+# Ajouter les lettres aux données pour le graphique
+summary_data_colorant <- data %>%
+  group_by(colorant) %>%
+  summarise(mean_luminance = mean(luminance), sd_luminance = sd(luminance), .groups = 'drop') %>%
+  mutate(significance = letters_colorant[as.character(colorant)]) %>%
+  arrange(mean_luminance)  # Trier par moyenne de luminance
+
+# Graphique pour l'effet du colorant sur la luminance
+p1 <- ggplot(summary_data_colorant, aes(x = reorder(colorant, mean_luminance), y = mean_luminance, fill = colorant)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  geom_errorbar(aes(ymin = mean_luminance - sd_luminance, ymax = mean_luminance + sd_luminance), width = 0.2) +
+  geom_text(aes(label = significance), vjust = -0.5, size = 4) +  # Afficher les lettres significatives sur les barres
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    title = "Effet du pourcentage de colorant sur la luminance",
+    x = "Colorant (%)",
+    y = "Moyenne de luminance"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
+    axis.text.y = element_text(size = 9),
+    legend.position = "none",  # Supprimer la légende
+    plot.title = element_text(size = 14),
+    axis.title = element_text(size = 11)
+  )
+
+# Afficher le premier graphique
+print(p1)
+
+# Créer le modèle ANOVA pour l'interaction colorant * fraises
+anova_model_inter <- aov(luminance ~ colorant * fraises, data = data)
+summary(anova_model_inter)
+
+# Effectuer le test de Tukey pour l'interaction (colorant * fraises)
+tukey_result_inter <- TukeyHSD(anova_model_inter, "colorant:fraises")
+tukey_inter_df <- as.data.frame(tukey_result_inter$`colorant:fraises`)
+tukey_inter_df$Comparison <- rownames(tukey_inter_df)
+
+# Afficher les résultats du test de Tukey pour l'interaction
+print("Table des résultats de Tukey pour l'interaction colorant * fraises :")
+print(tukey_inter_df)
+
+# Obtenir les lettres significatives pour les barres de l'interaction
+letters_inter <- multcompLetters(tukey_result_inter$`colorant:fraises`[, "p adj"])
+
+# Calculer les moyennes et les écarts types pour chaque combinaison de colorant et morceaux de fraises
+summary_data_inter <- data %>%
+  group_by(colorant, fraises) %>%
+  summarise(mean_luminance = mean(luminance), sd_luminance = sd(luminance), .groups = 'drop') %>%
+  mutate(significance = letters_inter[as.character(interaction(colorant, fraises))]) %>%
+  arrange(mean_luminance)  # Trier par moyenne de luminance
+
+# Graphique pour l'effet de l'interaction entre colorant et morceaux de fraises
+p2 <- ggplot(summary_data_inter, aes(x = reorder(interaction(colorant, fraises), mean_luminance), y = mean_luminance, fill = interaction(colorant, fraises))) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  geom_errorbar(aes(ymin = mean_luminance - sd_luminance, ymax = mean_luminance + sd_luminance), width = 0.2) +
+  geom_text(aes(label = significance), vjust = -0.5, size = 4) +  # Afficher les lettres significatives sur les barres
+  scale_fill_brewer(palette = "Set3") +
+  labs(
+    title = "Effet de l'interaction (colorant/morceaux) sur la luminance",
+    x = "Combinaison de colorant et morceaux de fraises",
+    y = "Moyenne de luminance"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
+    axis.text.y = element_text(size = 9),
+    legend.position = "none",  # Supprimer la légende
+    plot.title = element_text(size = 14),
+    axis.title = element_text(size = 11)
+  )
+
+# Afficher le deuxième graphique
+print(p2)
+
