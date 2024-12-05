@@ -1,1 +1,32 @@
 
+#Préparation avant de faire les tests
+file_path<-"C:/Users/elise/Desktop/q6 test.ods"
+data <- read_ods(file_path, sheet = 1)
+model <- lm(a ~ morceaux_fraises + colorant, data = data)
+install.packages("car")
+library(car)
+
+#Test de Levene
+leveneTest(a ~ morceaux_fraises * colorant, data = data)
+
+#Test de Durbin-Watson
+dwtest(model)
+
+#Autocorrélation des résidus 
+residuals <- resid(model)
+autocorrelation <- cor(residuals[-length(residuals)], residuals[-1]) 
+cat("Autocorrélation des résidus : ", round(autocorrelation, 3), "\n")
+
+#Graphique d'interaction
+ggplot(means, aes(x = colorant, y = a, color = morceaux_fraises, group = morceaux_fraises)) +
++     geom_line(size = 1) +  # Lignes des interactions
++     geom_point(size = 3) +  # Points pour les moyennes
++     labs(x = "Pourcentage de colorant", 
++          y = "Moyenne", 
++          color = "Pourcentage de morceaux de fraises") +
++     theme_minimal() +  # Style minimal pour le graphique
++     theme(text = element_text(size = 14))  # Taille des textes
+
+#Anova à 2 facteurs
+anova_model <- aov(a ~ `morceaux fraises` * colorant, data = data)
+summary(anova_model)
